@@ -1,0 +1,237 @@
+{% extends "main/Layout.html" %}
+{% load static %}
+
+{% block title %}
+    Candidates for {{ service.name }}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* General Styling */
+    .container {
+        max-width: 1200px;
+    }
+    h2 {
+        color: #333;
+    }
+    p {
+        color: #666;
+        font-size: 16px;
+    }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    /* Candidate Card Styling */
+    .candidate-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #fff;
+    }
+
+    .candidate-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .candidate-avatar {
+        width: 120px;
+        height: 120px;
+        margin-top: -60px;
+        border: 5px solid #fff;
+        border-radius: 50%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .candidate-card:hover .candidate-avatar {
+        transform: scale(1.1);
+    }
+
+    .card-body {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .candidate-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin: 10px 0;
+    }
+
+    .candidate-skills, .candidate-education {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 15px;
+    }
+
+    /* Section Heading Styling */
+    .section-heading {
+        margin-bottom: 60px;
+    }
+
+    .section-heading h2 {
+        font-size: 36px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .section-heading p {
+        font-size: 18px;
+        color: #555;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .candidate-card {
+            margin: 20px 0;
+        }
+
+        .section-heading h2 {
+            font-size: 28px;
+        }
+
+        .section-heading p {
+            font-size: 16px;
+        }
+    }
+    
+ 
+
+
+    .btn.btn-green {
+    background-color: #28a745; /* Green background color */
+    color: white !important; /* Force white text color */
+    border: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    
+}
+.btn.btn-secondary{
+    border: none; 
+    font-weight: bold;
+}
+
+
+
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="ezy__candidates light" id="ezy__candidates">
+    <div class="container mt-5">
+        <div class="row justify-content-center section-heading text-center">
+            <div class="col-md-10 col-lg-8">
+                <h2 class="ezy__service23-heading">Candidates for {{ service.name }}</h2>
+                <p>Here are candidates that match the required skills. Click on a candidate to view their full profile.</p>
+            </div>
+        </div>
+
+        <!-- <form method="get" class="filter-form mb-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="min_experience">Minimum Experience (in years):</label>
+                    <input type="number" id="min_experience" name="min_experience" class="form-control" 
+                           value="{{ request.GET.min_experience }}">
+                </div>
+                <div class="col-md-6">
+                    <label for="skills">Skills (comma-separated):</label>
+                    <input type="text" id="skills" name="skills" class="form-control" 
+                           value="{{ request.GET.skills }}">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Filter</button>
+        </form> -->
+        <!-- <form method="get">
+            <input type="text" name="min_experience" placeholder="Minimum Experience" value="{{ request.GET.min_experience }}">
+            <input type="text" name="skills" placeholder="Skills (comma-separated)" value="{{ request.GET.skills }}">
+            <input type="text" name="language" placeholder="Language (comma-separated)" value="{{ request.GET.language }}">
+            <input type="text" name="city" placeholder="City" value="{{ request.GET.city }}">
+            <input type="text" name="education" placeholder="Education" value="{{ request.GET.education }}">
+            <button type="submit">Filter</button>
+        </form> -->
+        <div class="card p-3">
+            <form method="get" class="d-flex flex-wrap gap-2" id="filterForm">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" name="min_experience" placeholder="Minimum Experience" value="{{ request.GET.min_experience }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" name="skills" placeholder="Skills (comma-separated)" value="{{ request.GET.skills }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" name="language" placeholder="Language (comma-separated)" value="{{ request.GET.language }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" name="city" placeholder="City" value="{{ request.GET.city }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" name="education" placeholder="Education" value="{{ request.GET.education }}">
+                    </div>
+                    <div class="col-md-4 mb-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-green flex-grow-1"><span>Filter</span></button>
+                        <a href="?service_id={{ service.id }}" class="btn btn-secondary flex-grow-1">Reset</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <br>
+        <br> 
+        <br>
+        <br> 
+
+        <div class="row justify-content-center">
+            {% if candidates %}
+                {% for candidate in candidates %}
+                    <div class="col-md-6 col-lg-4 mb-5">
+                        <div class="card candidate-card">
+                            <div class="text-center">
+                                {% if candidate.profile_image %}
+                                    <img class="candidate-avatar" src="{{ candidate.profile_image.url }}" alt="{{ candidate.user.username }}">
+                                {% else %}
+                                    <img class="candidate-avatar" src="{% static 'assets/candidate2.jpg' %}" alt="avatar">
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h4 class="candidate-name">{{ candidate.user.first_name }} {{ candidate.user.last_name }}</h4>
+                                <p class="candidate-skills">{{ candidate.skills }}</p>
+                                <p class="candidate-education">{{ candidate.education }}</p>
+                                <a href="{% url 'candidate_profile' candidate.id %}?service_id={{ service.id }}" class="btn-view-profile"><button class="px-3"><span>View Profile</span></button></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <!-- Demo Candidates when no candidates are available -->
+                <div class="col-md-6 col-lg-4 mb-5">
+                    <div class="card candidate-card">
+                        <div class="text-center">
+                            <img class="candidate-avatar" src="{% static 'assets/candidate2.jpg' %}" alt="Demo Candidate">
+                        </div>
+                        <div class="card-body">
+                            <h4 class="candidate-name">Demo Candidate </h4>
+                            <p class="candidate-skills">Skill , Skill , Skill </p>
+                            <p class="candidate-education">Demo Education </p>
+                            <a href="#" class="btn-view-profile"><button class="px-3"><span>View Profile</span></button></a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+    
+</script>
+{% endblock %}
