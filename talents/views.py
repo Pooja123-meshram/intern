@@ -90,7 +90,7 @@ def skill_service_candidates(request, service_id):
 
     # Apply filtering based on query parameters
     min_experience = request.GET.get('min_experience')
-    skills = request.GET.get('skills')
+  
     language = request.GET.get('language')
     city = request.GET.get('city')
     education = request.GET.get('education')
@@ -104,14 +104,7 @@ def skill_service_candidates(request, service_id):
         if extract_experience(candidate.experience) >= int(min_experience)
     ]
 
-    # Filtering by specific skills
-    if skills:
-        skill_list = [skill.strip().lower() for skill in skills.split(',')]
-        matching_candidates = [
-            candidate for candidate in matching_candidates
-            if any(skill in [s.strip().lower() for s in candidate.skills.split(',')] for skill in skill_list)
-        ]
-
+   
 
     # Filtering by language
     if language:
